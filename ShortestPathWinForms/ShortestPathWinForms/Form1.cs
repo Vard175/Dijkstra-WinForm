@@ -12,16 +12,23 @@ namespace ShortestPathWinForms
 {
     public partial class Form1 : Form
     {
-        int nodesCount;
+        static int nodesCount;
+        static int source;
+        static int target;
+        static bool isGenerateClicked = false;
+        static Point[] nodesCircle;
+        static Point[] nodesSquare;
+        static int squareWidth ;
+
+        MinHeap<int, int> heap = new MinHeap<int, int>();
+        Dictionary<int, int> path = new Dictionary<int, int>();
+        Dictionary<int, int> dist = new Dictionary<int, int>();
+        HashSet<int> set = new HashSet<int>();
 
         public Form1()
         {
             InitializeComponent();
-
-            MinHeap<int, int> heap = new MinHeap<int, int>();
-            Dictionary<int, int> path = new Dictionary<int, int>();
-            Dictionary<int, int> dist = new Dictionary<int, int>();
-            HashSet<int> set = new HashSet<int>();
+            squareWidth = 20;
 
             string[] lines = System.IO.File.ReadAllLines(@"D:\Projects\Master\DijkstraAlgorithm\input.txt");
 
@@ -30,8 +37,6 @@ namespace ShortestPathWinForms
             int count = 0;
              //vertices
             int edgesCount; //edges
-            int source;
-            int target;
 
             while (!Int32.TryParse(lines[count], out nodesCount))
             {
@@ -115,9 +120,10 @@ namespace ShortestPathWinForms
             #endregion
 
             #region Printing results
-//nw8ic nka8i
+            // TODO Invalidate
             #endregion
         }
+
         public static void Relax(MinHeap<int, int> heap, Dictionary<int, int> path, int u, int v, int w)
         {
             if (heap.TryGetValue(v, out int vWeight))
@@ -131,8 +137,10 @@ namespace ShortestPathWinForms
             }
         }
 
-        protected override void OnPaint(PaintEventArgs e)  // e-n eventi paramn a 
+        protected override void OnPaint(PaintEventArgs e) 
         {
+            //  PrintPath(path, source, target);
+            
             #region Visual staff
 
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
@@ -141,19 +149,19 @@ namespace ShortestPathWinForms
             Pen edgePenBefore = new Pen(Brushes.LightSlateGray, 3);
             SolidBrush nodeBrushAfter = new SolidBrush(Color.Crimson);
             Pen edgePenAfter = new Pen(Brushes.Red, 3);
-
+            
             System.Drawing.Drawing2D.AdjustableArrowCap bigArrow = new System.Drawing.Drawing2D.AdjustableArrowCap(5, 5);
             edgePenBefore.CustomStartCap = bigArrow;
             edgePenAfter.CustomStartCap=bigArrow;
-
+            
             int angle = 360/nodesCount;
             int currentAngle = angle;
             int radius = 200;
-            int squareWidth = 20;
+            
             Random random = new Random();
             Point center = new Point(Width / 2, Height / 2);
-            Point[] nodesCircle = new Point[nodesCount];
-            Point[] nodesSquare = new Point[nodesCount];
+            nodesCircle= new Point[nodesCount];
+            nodesSquare= new Point[nodesCount];
 
             #region nodes on circle
             for (int i = 0; i < nodesSquare.Length; i++)
@@ -162,8 +170,8 @@ namespace ShortestPathWinForms
                 int b = (int)(radius * Math.Sin(currentAngle * 2 * Math.PI / 360));
                 nodesSquare[i] = new Point(center.X + a, center.Y - b);
                 nodesCircle[i] = new Point(nodesSquare[i].X + squareWidth / 2, nodesSquare[i].Y + squareWidth / 2);
-                 //g.DrawEllipse(nodePen, center.X + a, center.Y - b, squareWidth, squareWidth);
-                g.FillEllipse(nodeBrushBefore, center.X + a, center.Y - b, squareWidth, squareWidth);
+            
+                g.FillEllipse(nodeBrushBefore, nodesSquare[i].X,nodesSquare[i].Y, squareWidth, squareWidth);
                 currentAngle += angle;
 
                 createLabel(e, $"{i}", Color.DarkRed, nodesCircle[i]);
@@ -171,10 +179,29 @@ namespace ShortestPathWinForms
 
             #endregion
 
+            // TODO անցնել հարևաններով ու նկարել կողերն ու կշիռները
+            if (isGenerateClicked)
+            {
+               // if (source == vertex)
+
+        //    {
+
+                    //        Console.Write($" {source}");
+                    //        return;
+                    //    }
+                    //    else if (parent[vertex] == -1)
+                    //    {
+                    //        Console.WriteLine($"There is no path from {source} to {vertex}");
+                    //        return;
+                    //    }
+                    //    else PrintPath(e, parent, source, parent[vertex]);
+                    //    Console.Write($" -> {vertex} ");
+            }
+
 
             #endregion
 
-            drawEdge(e, edgePenBefore, nodesCircle[3], nodesCircle[2],"a");
+            drawEdge(e, edgePenBefore, nodesCircle[3], nodesCircle[2],"jj");
             drawEdge(e, edgePenBefore, nodesCircle[2], nodesCircle[3], "a");            
             drawEdge(e, edgePenBefore, nodesCircle[2], nodesCircle[1], "a");
         }
@@ -186,6 +213,26 @@ namespace ShortestPathWinForms
             Height = 1600;
 
             
+        }
+
+        public static void PrintPath(PaintEventArgs e, Brush brush, Pen pen, Dictionary<int, int> parent,int source,int target)
+        {
+            Graphics g = e.Graphics;
+            if (source == target)
+            {
+                g.FillEllipse(brush, nodesSquare[source].X, nodesSquare[source].Y, squareWidth, squareWidth);
+                return;
+            }
+
+            else if (parent[target] == -1)
+            {
+                MessageBox.Show($"There is no path from {source} to {target}");
+                return;
+            }
+            else PrintPath(e, brush, pen, parent, source, parent[target]);
+            g.FillEllipse(brush, nodesSquare[target].X, nodesSquare[target].Y, squareWidth, squareWidth);
+            drawEdge(e, pen, nodesCircle[], nodesCircle[2], "jj");
+
         }
 
         public void createLabel(PaintEventArgs e, String text, Color color, Point location)
@@ -200,7 +247,7 @@ namespace ShortestPathWinForms
             this.Controls.Add(mylab);
         }
 
-        public void drawEdge(PaintEventArgs e, Pen pen, Point start, Point end, String weight)
+        public static void drawEdge(PaintEventArgs e, Pen pen, Point start, Point end, String weight)
         {
             #region edge from start to end
             int x1 = start.X;
@@ -230,6 +277,17 @@ namespace ShortestPathWinForms
             #endregion
 
             createLabel(e, weight, Color.Green, controlPoint);
+        }
+
+        private void buttonGeneratePath_Click(object sender, EventArgs e)
+        {
+            isGenerateClicked = true;
+            Invalidate();
+        }
+
+        private void buttonShowDistance_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show($"distance of {target} from {source} is {dist[target]} ");
         }
     }
 }
