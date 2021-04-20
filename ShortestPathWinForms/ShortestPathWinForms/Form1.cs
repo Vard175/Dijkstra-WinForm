@@ -21,7 +21,7 @@ namespace ShortestPathWinForms
         {
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
 
-            #region All I need
+            #region All I 
             Graphics g = e.Graphics;
             Pen nodePen = new Pen(Brushes.Sienna,3);
             SolidBrush nodeBrush = new SolidBrush(Color.Sienna);
@@ -123,7 +123,7 @@ namespace ShortestPathWinForms
             e.Graphics.DrawBezier(pen, start, controlPoint, controlPoint, end);
             #endregion
 
-            createLabel(e, "12", Color.Green, controlPoint);
+            createLabel(e, "122", Color.Green, controlPoint);
         }
 
         private void Form1_Load(object sender, EventArgs e)
