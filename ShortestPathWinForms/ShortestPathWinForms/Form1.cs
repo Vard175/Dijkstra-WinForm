@@ -21,15 +21,13 @@ namespace ShortestPathWinForms
         {
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
 
-            #region All I 
+            #region All I need
             Graphics g = e.Graphics;
-            Pen nodePen = new Pen(Brushes.Sienna,3);
-            SolidBrush nodeBrush = new SolidBrush(Color.Sienna);
-           // Brushes nodeBrush = new Brushes(Color.Sienna);
-            Pen edgePen = new Pen(Brushes.LightSlateGray, 3);
+            SolidBrush nodeBrushBefore = new SolidBrush(Color.Sienna);
+            Pen edgePenBefore = new Pen(Brushes.LightSlateGray, 3);
 
             System.Drawing.Drawing2D.AdjustableArrowCap bigArrow = new System.Drawing.Drawing2D.AdjustableArrowCap(5, 5);
-            edgePen.CustomStartCap = bigArrow;
+            edgePenBefore.CustomStartCap = bigArrow;
 
             int nodeCount = 5;
             int angle = 72;
@@ -79,7 +77,6 @@ namespace ShortestPathWinForms
 
 
         }
-
         public void createLabel(PaintEventArgs e,String text,Color color,Point location)
         {
             // Creating and setting the label
@@ -132,16 +129,7 @@ namespace ShortestPathWinForms
             Width = 2400;
             Height = 1600;
 
-            //// Creating and setting the label
-            //Label mylab = new Label();
-            //mylab.Text = "GeeksforGeeks";
-            //mylab.Location = new Point(222, 90);
-            //mylab.AutoSize = true;
-            //mylab.Font = new Font("Calibri", 18);
-            //mylab.ForeColor = Color.Green;
-
-            //// Adding this control to the form
-            //this.Controls.Add(mylab);
+            
         }
     }
 }
