@@ -31,6 +31,7 @@ namespace ShortestPathWinForms
         {
             this.buttonGeneratePath = new System.Windows.Forms.Button();
             this.buttonShowDistance = new System.Windows.Forms.Button();
+            this.buttonRestart = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // buttonGeneratePath
@@ -53,11 +54,22 @@ namespace ShortestPathWinForms
             this.buttonShowDistance.UseVisualStyleBackColor = true;
             this.buttonShowDistance.Click += new System.EventHandler(this.buttonShowDistance_Click);
             // 
+            // buttonRestart
+            // 
+            this.buttonRestart.Location = new System.Drawing.Point(13, 107);
+            this.buttonRestart.Name = "buttonRestart";
+            this.buttonRestart.Size = new System.Drawing.Size(160, 40);
+            this.buttonRestart.TabIndex = 3;
+            this.buttonRestart.Text = "Clear Path";
+            this.buttonRestart.UseVisualStyleBackColor = true;
+            this.buttonRestart.Click += new System.EventHandler(this.buttonRestart_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1924, 1055);
+            this.Controls.Add(this.buttonRestart);
             this.Controls.Add(this.buttonShowDistance);
             this.Controls.Add(this.buttonGeneratePath);
             this.Name = "Form1";
@@ -71,6 +83,7 @@ namespace ShortestPathWinForms
 
         private System.Windows.Forms.Button buttonGeneratePath;
         private System.Windows.Forms.Button buttonShowDistance;
+        private System.Windows.Forms.Button buttonRestart;
     }
 }
 

@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ShortestPathWinForms
@@ -13,30 +8,60 @@ namespace ShortestPathWinForms
     public partial class Form1 : Form
     {
         static int nodesCount;
+  
         static int source;
         static int target;
         static bool isGenerateClicked = false;
         static Point[] nodesCircle;
         static Point[] nodesSquare;
-        static int squareWidth ;
+        static int squareWidth =20;
+        static string[] lines;
 
         MinHeap<int, int> heap = new MinHeap<int, int>();
         Dictionary<int, int> path = new Dictionary<int, int>();
         Dictionary<int, int> dist = new Dictionary<int, int>();
         HashSet<int> set = new HashSet<int>();
+        AdjacencyList adj;
 
+        //public static int[] doValidation(int count)
+        //{
+        //    int output;
+        //    while (!Int32.TryParse(lines[count], out output))
+        //    {
+        //        count++;
+        //    }
+        //    count++;
+
+        //    return new int[] { output,count};
+        //}
+        ////28,45,279,190
         public Form1()
         {
             InitializeComponent();
-            squareWidth = 20;
 
-            string[] lines = System.IO.File.ReadAllLines(@"D:\Projects\Master\DijkstraAlgorithm\input.txt");
+            #region Graph input Validation And Initialization
 
-            #region Graph input 
-
+            lines = System.IO.File.ReadAllLines(@"D:\Projects\Master\DijkstraAlgorithm\input.txt");
+            int edgesCount=0;
             int count = 0;
-             //vertices
-            int edgesCount; //edges
+
+            // int[] temp = new int[2];
+
+            //int count=0;
+            // temp = doValidation(count);
+            // nodesCount = temp[0];
+            // count = temp[1];
+            // temp = doValidation(count);
+            // edgesCount = temp[0];
+            // count = temp[1];
+            // temp = doValidation(count);
+            // source = temp[0];
+            // count = temp[1];
+            // temp = doValidation(count);
+            // target = temp[0];
+            // count = temp[1];
+
+
 
             while (!Int32.TryParse(lines[count], out nodesCount))
             {
@@ -62,7 +87,7 @@ namespace ShortestPathWinForms
             }
             count++;
 
-            AdjacencyList adj = new AdjacencyList(nodesCount);
+           adj = new AdjacencyList(nodesCount);
 
             for (int i = count; i < lines.Length; ++i)
             {
@@ -89,9 +114,7 @@ namespace ShortestPathWinForms
                 set.Add(startVertex);
                 set.Add(endVertex);
             }
-            #endregion
-
-            #region initialization
+           
             foreach (var i in set)
             {
                 path.Add(i, -1);
@@ -105,9 +128,9 @@ namespace ShortestPathWinForms
             while (!heap.Empty())
             {
                 var u = heap.Peek();
+                dist[u.Key] = u.Value;
                 if (u.Key == target)
                     break;
-                dist[u.Key] = u.Value;
                 var list = adj.GetAdjacences(u.Key);
 
                 foreach (var v in list)
@@ -117,10 +140,6 @@ namespace ShortestPathWinForms
                 }
                 heap.RemoveMin();
             }
-            #endregion
-
-            #region Printing results
-            // TODO Invalidate
             #endregion
         }
 
@@ -139,88 +158,70 @@ namespace ShortestPathWinForms
 
         protected override void OnPaint(PaintEventArgs e) 
         {
-            //  PrintPath(path, source, target);
-            
-            #region Visual staff
 
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
             Graphics g = e.Graphics;
             SolidBrush nodeBrushBefore = new SolidBrush(Color.Sienna);
             Pen edgePenBefore = new Pen(Brushes.LightSlateGray, 3);
-            SolidBrush nodeBrushAfter = new SolidBrush(Color.Crimson);
-            Pen edgePenAfter = new Pen(Brushes.Red, 3);
-            
             System.Drawing.Drawing2D.AdjustableArrowCap bigArrow = new System.Drawing.Drawing2D.AdjustableArrowCap(5, 5);
-            edgePenBefore.CustomStartCap = bigArrow;
-            edgePenAfter.CustomStartCap=bigArrow;
+            edgePenBefore.CustomEndCap = bigArrow;
             
             int angle = 360/nodesCount;
             int currentAngle = angle;
             int radius = 200;
-            
-            Random random = new Random();
             Point center = new Point(Width / 2, Height / 2);
             nodesCircle= new Point[nodesCount];
             nodesSquare= new Point[nodesCount];
 
-            #region nodes on circle
+            #region putting nodes on circle
             for (int i = 0; i < nodesSquare.Length; i++)
             {
                 int a = (int)(radius * Math.Cos(currentAngle * 2 * Math.PI / 360));
                 int b = (int)(radius * Math.Sin(currentAngle * 2 * Math.PI / 360));
+                currentAngle += angle;
                 nodesSquare[i] = new Point(center.X + a, center.Y - b);
                 nodesCircle[i] = new Point(nodesSquare[i].X + squareWidth / 2, nodesSquare[i].Y + squareWidth / 2);
             
                 g.FillEllipse(nodeBrushBefore, nodesSquare[i].X,nodesSquare[i].Y, squareWidth, squareWidth);
-                currentAngle += angle;
-
                 createLabel(e, $"{i}", Color.DarkRed, nodesCircle[i]);
             }
 
             #endregion
 
-            // TODO անցնել հարևաններով ու նկարել կողերն ու կշիռները
-            if (isGenerateClicked)
+            for (int i = 0; i < nodesCount; i++)
             {
-               // if (source == vertex)
+                var adjTemp = adj.GetAdjacences(i);
 
-        //    {
-
-                    //        Console.Write($" {source}");
-                    //        return;
-                    //    }
-                    //    else if (parent[vertex] == -1)
-                    //    {
-                    //        Console.WriteLine($"There is no path from {source} to {vertex}");
-                    //        return;
-                    //    }
-                    //    else PrintPath(e, parent, source, parent[vertex]);
-                    //    Console.Write($" -> {vertex} ");
+                foreach (KeyValuePair<int, int> pair in adjTemp)
+                {
+                    drawEdge(e, edgePenBefore, nodesCircle[i], nodesCircle[pair.Key], $"{pair.Value}");
+                }
             }
 
-
-            #endregion
-
-            drawEdge(e, edgePenBefore, nodesCircle[3], nodesCircle[2],"jj");
-            drawEdge(e, edgePenBefore, nodesCircle[2], nodesCircle[3], "a");            
-            drawEdge(e, edgePenBefore, nodesCircle[2], nodesCircle[1], "a");
+            if (isGenerateClicked)
+            {
+                PrintPath(e, path, source, target);
+            }
         }
    
         private void Form1_Load(object sender, EventArgs e)
         {
             // TODO my screen size
             Width = 2400;
-            Height = 1600;
-
-            
+            Height = 1600;  
         }
 
-        public static void PrintPath(PaintEventArgs e, Brush brush, Pen pen, Dictionary<int, int> parent,int source,int target)
+        public void PrintPath(PaintEventArgs e, Dictionary<int, int> parent,int source,int target)
         {
+            SolidBrush nodeBrushAfter = new SolidBrush(Color.Black);
+            Pen edgePenAfter = new Pen(Brushes.Crimson, 3);
+            System.Drawing.Drawing2D.AdjustableArrowCap bigArrow = new System.Drawing.Drawing2D.AdjustableArrowCap(5, 5);
+            edgePenAfter.CustomEndCap = bigArrow;
+
             Graphics g = e.Graphics;
             if (source == target)
             {
-                g.FillEllipse(brush, nodesSquare[source].X, nodesSquare[source].Y, squareWidth, squareWidth);
+                g.FillEllipse(nodeBrushAfter, nodesSquare[source].X, nodesSquare[source].Y, squareWidth, squareWidth);
                 return;
             }
 
@@ -229,13 +230,13 @@ namespace ShortestPathWinForms
                 MessageBox.Show($"There is no path from {source} to {target}");
                 return;
             }
-            else PrintPath(e, brush, pen, parent, source, parent[target]);
-            g.FillEllipse(brush, nodesSquare[target].X, nodesSquare[target].Y, squareWidth, squareWidth);
-            drawEdge(e, pen, nodesCircle[], nodesCircle[2], "jj");
+            else PrintPath(e, parent, source, parent[target]);
+            g.FillEllipse(nodeBrushAfter, nodesSquare[target].X, nodesSquare[target].Y, squareWidth, squareWidth);
+            drawEdge(e, edgePenAfter, nodesCircle[parent[target]], nodesCircle[target], "jj");
 
         }
 
-        public void createLabel(PaintEventArgs e, String text, Color color, Point location)
+        public  void createLabel(PaintEventArgs e, String text, Color color, Point location)
         {
             Label mylab = new Label();
             mylab.Text = text;
@@ -247,9 +248,8 @@ namespace ShortestPathWinForms
             this.Controls.Add(mylab);
         }
 
-        public static void drawEdge(PaintEventArgs e, Pen pen, Point start, Point end, String weight)
+        public  void drawEdge(PaintEventArgs e, Pen pen, Point start, Point end, String weight)
         {
-            #region edge from start to end
             int x1 = start.X;
             int y1 = start.Y;
             int x2 = end.X;
@@ -274,8 +274,6 @@ namespace ShortestPathWinForms
             controlPoint.Y = (int)((y1 + y2) / 2 + signY * c * Math.Sin(angle));
 
             e.Graphics.DrawBezier(pen, start, controlPoint, controlPoint, end);
-            #endregion
-
             createLabel(e, weight, Color.Green, controlPoint);
         }
 
@@ -287,7 +285,14 @@ namespace ShortestPathWinForms
 
         private void buttonShowDistance_Click(object sender, EventArgs e)
         {
+            
             MessageBox.Show($"distance of {target} from {source} is {dist[target]} ");
+        }
+
+        private void buttonRestart_Click(object sender, EventArgs e)
+        {
+            isGenerateClicked = false;
+            Invalidate();
         }
     }
 }
