@@ -73,7 +73,7 @@ namespace ShortestPathWinForms
             this.Controls.Add(this.buttonShowDistance);
             this.Controls.Add(this.buttonGeneratePath);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Shortest Path Generator";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
 
